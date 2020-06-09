@@ -1,0 +1,11 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs
+/LearnSF/.vs/LearnSF/v16
+/LearnSF/FirstSFProj/obj/x64/Debug
+/LearnSF/FirstSFProj/FirstSFProj.sfproj.user
+/LearnSF/FirstStatelessService/bin/Debug/netcoreapp3.1/win7-x64
+/LearnSF/FirstStatelessService/obj
+/LearnSF/packages/Microsoft.VisualStudio.Azure.Fabric.MSBuild.1.6.10
