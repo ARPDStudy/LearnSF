@@ -9,3 +9,5 @@
 /LearnSF/FirstStatelessService/bin/Debug/netcoreapp3.1/win7-x64
 /LearnSF/FirstStatelessService/obj
 /LearnSF/packages/Microsoft.VisualStudio.Azure.Fabric.MSBuild.1.6.10
+/LearnSF/.vs/LearnSF/DesignTimeBuild
+/LearnSF/FirstSFProj/pkg/Debug
