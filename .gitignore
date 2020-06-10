@@ -11,3 +11,9 @@
 /LearnSF/packages/Microsoft.VisualStudio.Azure.Fabric.MSBuild.1.6.10
 /LearnSF/.vs/LearnSF/DesignTimeBuild
 /LearnSF/FirstSFProj/pkg/Debug
+/LearnSF/Communication/bin/Debug/netstandard2.0
+/LearnSF/Communication/obj
+/LearnSF/StatefulBankingService/bin/Debug/netcoreapp3.1/win7-x64
+/LearnSF/StatefulBankingService/obj
+/LearnSF/StatelessBankingApi/bin/Debug/netcoreapp3.1/win7-x64
+/LearnSF/StatelessBankingApi/obj

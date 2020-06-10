@@ -33,6 +33,10 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FirstStatelessService\FirstStatelessService.csproj" />
+    <ProjectReference Include="..\StatefulBankingService\StatefulBankingService.csproj" />
+    <ProjectReference Include="..\StatelessBankingApi\StatelessBankingApi.csproj">
+      <ServiceLaunchUrl>http://{MachineName}:{ServicePort}/weatherforecast</ServiceLaunchUrl>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
   <PropertyGroup>
