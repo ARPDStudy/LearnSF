@@ -2,7 +2,9 @@
 <ApplicationManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ApplicationTypeName="FirstSFProjType" ApplicationTypeVersion="1.0.0" xmlns="http://schemas.microsoft.com/2011/01/fabric">
   <Parameters>
     <Parameter Name="StatefulBankingService_MinReplicaSetSize" DefaultValue="3" />
-    <Parameter Name="StatefulBankingService_PartitionCount" DefaultValue="1" />
+    <!--<Parameter Name="StatefulBankingService_PartitionCount" DefaultValue="1" />
+	<Parameter Name="StatefulBankingService_LowKey" DefaultValue="0" />
+	<Parameter Name="StatefulBankingService_HighKey" DefaultValue="3" />-->
     <Parameter Name="StatefulBankingService_TargetReplicaSetSize" DefaultValue="3" />
     <Parameter Name="StatelessBankingApi_ASPNETCORE_ENVIRONMENT" DefaultValue="" />
     <Parameter Name="StatelessBankingApi_InstanceCount" DefaultValue="-1" />
@@ -34,7 +36,13 @@
          The attribute ServiceTypeName below must match the name defined in the imported ServiceManifest.xml file. -->
     <Service Name="StatefulBankingService" ServicePackageActivationMode="ExclusiveProcess">
       <StatefulService ServiceTypeName="StatefulBankingServiceType" TargetReplicaSetSize="[StatefulBankingService_TargetReplicaSetSize]" MinReplicaSetSize="[StatefulBankingService_MinReplicaSetSize]">
-        <UniformInt64Partition PartitionCount="[StatefulBankingService_PartitionCount]" LowKey="-9223372036854775808" HighKey="9223372036854775807" />
+        <!--<UniformInt64Partition PartitionCount="[StatefulBankingService_PartitionCount]" LowKey="[StatefulBankingService_LowKey]" HighKey="[StatefulBankingService_HighKey]" />-->
+        <NamedPartition>
+          <Partition Name="CHECKING" />
+          <Partition Name="SAVINGS" />
+          <Partition Name="STOCKBROKERAGE" />
+          <Partition Name="401k" />
+        </NamedPartition>
       </StatefulService>
     </Service>
     <Service Name="StatelessBankingApi" ServicePackageActivationMode="ExclusiveProcess">

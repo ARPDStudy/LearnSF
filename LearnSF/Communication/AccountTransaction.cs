@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Communication
 {
-    public class Transaction
+    public class AccountTransaction
     {
         [DataMember]
         public string TransactionId { get; set; }

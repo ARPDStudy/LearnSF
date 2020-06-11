@@ -20,6 +20,15 @@ namespace Communication
         public Decimal Balance { get; set; }
 
         [DataMember]
-        public IEnumerable<Transaction> History { get; set; } = new List<Transaction>();
+        public IEnumerable<AccountTransaction> History { get; set; } = new List<AccountTransaction>();
+
+        public void Update(Account account)
+        {
+            this.Id = account.Id;
+            this.Name = account.Name;
+            this.AccountType = account.AccountType;
+            this.Balance = account.Balance;
+            var history = account.History;
+        }
     }
 }

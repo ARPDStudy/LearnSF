@@ -17,28 +17,105 @@ namespace StatefulBankingService
     /// </summary>
     internal sealed class StatefulBankingService : StatefulService, IStatefulService
     {
+        const string AccountsByUser = "ACCOUNTSBYUSER";
+        const string AccountsById = "ACCOUNTSBYID";
+
         public StatefulBankingService(StatefulServiceContext context)
             : base(context)
-        { }
-
-        public Task<decimal> Deposit(string accountId, decimal amount)
         {
-            throw new NotImplementedException();
+            
         }
 
-        public Task<Account> GetAccount(string name)
+        public async Task<decimal> Deposit(string accountId, decimal amount)
         {
-            throw new NotImplementedException();
+            var allAccounts = await this.StateManager.GetOrAddAsync<IReliableDictionary<string, Account>>(AccountsById);
+            Decimal result = 0;
+            using (var tx = this.StateManager.CreateTransaction())
+            {
+                var accounts = await allAccounts.TryGetValueAsync(tx, accountId);
+                accounts.Value.Balance += amount;
+                result = accounts.Value.Balance;
+
+                await tx.CommitAsync();
+            }
+
+            return result;
         }
 
-        public Task Transfer(string sourceAccountId, string destinationAccountId, decimal amount)
+        public async Task<Account> GetAccount(string accountId)
         {
-            throw new NotImplementedException();
+            var allAccounts = await this.StateManager.GetOrAddAsync<IReliableDictionary<string, Account>>(AccountsById);
+            Account result = null;
+            using (var tx = this.StateManager.CreateTransaction())
+            {
+                var accounts = await allAccounts.TryGetValueAsync(tx, accountId);
+                if (accounts.HasValue)
+                {
+                    result = accounts.Value;
+                }
+                await tx.CommitAsync();
+            }
+
+            return result;
         }
 
-        public Task<decimal> WithDraw(string accountId, decimal amount)
+        public async Task<IEnumerable<Account>> GetAccounts(string name)
         {
-            throw new NotImplementedException();
+            var allAccounts = await this.StateManager.GetOrAddAsync<IReliableDictionary<string, IEnumerable<Account>>>(AccountsByUser);
+            IEnumerable<Account> result = null;
+            using (var tx = this.StateManager.CreateTransaction())
+            {
+                var accounts = await allAccounts.TryGetValueAsync(tx, name);
+                result = accounts.HasValue ? accounts.Value : new List<Account>();
+                await tx.CommitAsync();
+            }
+
+            return result;
+        }
+
+        public async Task Register(Account account)
+        {
+            var accountsByUser = await this.StateManager.GetOrAddAsync<IReliableDictionary<string, IEnumerable<Account>>>(AccountsByUser);
+            var accountsById = await this.StateManager.GetOrAddAsync<IReliableDictionary<string, Account>>(AccountsById);
+
+            using (var tx = this.StateManager.CreateTransaction())
+            {
+                await accountsById.AddOrUpdateAsync(tx, account.Id, account, (k, v) => v);
+                await accountsByUser.AddOrUpdateAsync(
+                    tx,
+                    account.Name,
+                    new List<Account> { account },
+                    (k, v) =>
+                    {
+                        var existingAccount = v.FirstOrDefault(a => a.Id == account.Id);
+                        if (existingAccount != null)
+                        {
+                            existingAccount.Update(account);
+                        }
+                        else
+                        {
+                            v.Append(account);
+                        }
+
+                        return v;
+                    });
+
+                await tx.CommitAsync();
+            }
+        }
+
+        public async Task Transfer(string sourceAccountId, string destinationAccountId, decimal amount)
+        {
+            var allAccounts = await this.StateManager.GetOrAddAsync<IReliableDictionary<string, Account>>(AccountsById);
+            using (var tx = this.StateManager.CreateTransaction())
+            {
+                var source = await allAccounts.TryGetValueAsync(tx, sourceAccountId);
+                var destination = await allAccounts.TryGetValueAsync(tx, destinationAccountId);
+                source.Value.Balance -= amount;
+                destination.Value.Balance += amount;
+
+                await tx.CommitAsync();
+            }
         }
 
         /// <summary>
